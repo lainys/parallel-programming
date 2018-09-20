@@ -103,10 +103,10 @@ __global__ void kernel(int * a, int * b, int n, int * c)
 		__shared__ float	bs[BLOCK_SIZE][BLOCK_SIZE];
 		as[ty][tx] = a[ia + n * ty + tx];
 		bs[ty][tx] = b[ib + n * ty + tx];
-		__syncthreads(); // ”бедимс€, что подматрицы полностью загружены 
+		__syncthreads(); // Убедимся, что подматрицы полностью загружены 
 		for (int k = 0; k < BLOCK_SIZE; k++)
 			sum += as[ty][k] * bs[k][tx];
-		__syncthreads(); // ”бедимс€, что подматрицы никому больше не нужны 
+		__syncthreads(); // Убедимся, что подматрицы никому больше не нужны 
 	}
 	c[n * BLOCK_SIZE * by + BLOCK_SIZE * bx + n * ty + tx] = sum;
 }
@@ -114,19 +114,21 @@ __global__ void kernel(int * a, int * b, int n, int * c)
 
 int main()
 {
-	int k = 4;
+	int k = 10;
 
 	float *ans1 = new float[k];
 	float *ans2 = new float[k];
 	float *ans3 = new float[k];
 	int *var_N = new int[k];
 
-	for (int i = 0, N = 10; i < k; i++, N *= 10) {
+	for (int i = 0, N = 20; i < k; i++, N += 20) {
+
+		var_N[i] = N;
 
 		int**a = new int*[N];
 		int**b = new int*[N];
 		int**c = new int*[N];
-
+		
 		for (int i = 0; i < N; i++) {
 			a[i] = new int[N];
 			b[i] = new int[N];
@@ -144,8 +146,9 @@ int main()
 				}
 			}
 		}
+		
 
-
+		std::cout << i << " ";
 		ans1[i] = checkCpu(a, b, c, N, 10);
 		std::cout << i << " ";
 		ans2[i] = check(a, b, c, N, 10);
@@ -350,7 +353,7 @@ float cudaParallelShare(int **a, int **b, int **c, int n) {
 	//----
 
 
-	kernel << <1, dim3(n, n), n + 1 >> > (dev_a, dev_b, n, dev_c);// , n);
+	kernel << < dim3(n/BLOCK_SIZE, n/BLOCK_SIZE), dim3(BLOCK_SIZE, BLOCK_SIZE) >> > (dev_a, dev_b, n, dev_c);// , n);
 
 
 	cudaDeviceSynchronize();
