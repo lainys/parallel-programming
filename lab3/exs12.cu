@@ -99,7 +99,7 @@ float histogram(unsigned int * histogram, void * data, unsigned byte_сount)
 
 	cudaEventRecord(start, 0);
 
-	
+
 	// построить гистограмму для каждого блока
 	histogramKernel << <dim3(num_partials), dim3(WARP_N*WARP_SIZE) >> > (partial_histograms, dev_data, byte_сount);
 
@@ -132,7 +132,7 @@ void init(int* a, int N) {
 int main()
 {
 
-	int k = 7;
+	int k = 5;
 
 	float *ans1 = new float[k];
 	float *ans2 = new float[k];
@@ -150,7 +150,7 @@ int main()
 		ans2[i] = checkGPU(a, h, N, 100);
 
 
-		std::cout << i <<" "<<ans2[i]<< std::endl;
+		std::cout << i << " " << ans2[i] << std::endl;
 
 		delete a;
 	}
@@ -197,7 +197,7 @@ float checkCPU(int* a, unsigned int* h, int N, int k) {
 		res += minCPU(a, h, N, NUM_BINS);
 	}
 
-	return res / (k * 1000.0f);
+	return res / (k * 1.0f)*1000;
 }
 
 
@@ -218,7 +218,7 @@ unsigned int minCPU(int* a, unsigned int* h, int N, int bins) {
 	unsigned int start_time = clock(); // начальное время
 									   // здесь должен быть фрагмент кода, время выполнения которого нужно измерить
 
-	//----
+									   //----
 
 	for (int i = 1; i < N; i++) {
 		if (a[i] < bins) {

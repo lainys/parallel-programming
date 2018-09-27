@@ -109,7 +109,7 @@ float checkCPU(int* a, int N, int k) {
 		res += minCPU(a, N);
 	}
 
-	return res / (k * 1.0f);
+	return res / (k * 1.0f)*1000;
 }
 
 
