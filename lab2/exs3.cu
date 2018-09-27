@@ -214,7 +214,7 @@ float checkCpu(int** a, int** b, int**c, int n, int k) {
 		res += cpuMulti(a, b, c, n);
 	}
 
-	return res / (k * 1.0f);
+	return res / (k * 1.0f)*1000;
 }
 
 
